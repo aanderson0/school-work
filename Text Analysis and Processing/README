@@ -1,0 +1,34 @@
+This set of programs splits documents into sentences, and then tokens, then tags each
+token with a part of speech tag for the purpose of document alanysis.
+
+Parts of the code are taken from the sample code provided by doctor Song.
+
+To run:
+type make
+type java -cp opennlp-tools-1.9.1.jar:. Splitter inputfile | java Scanner | java -cp opennlp-tools-1.9.1.jar:. Tagger | java Analyzer
+
+where inputfile is the file you are analyzing
+
+any point in the pipeline can be seen in the command line by not including the rest, or in a file by using > outputfile at any point
+
+The splitter doesn't read from the command line and must be provided an input file.
+
+limitations:
+The line structure is damaged by the sentence splitter, each sentence is put on one line, and the original lines aren't preserved.
+
+test plan:
+each component was tested seperately with different data
+for the sentence splitter test cases included:
+a normal document
+a document with multiple sentences in the title
+for the tokenizer:
+normal words
+apostraphized words like o'niel o'niel's
+mistakenly apostraphized words like world'cup this'is'just'a'test
+contractions like you're it's can't
+hyphonated words like data-base father-in-law
+mitakenly hyphonated this-is-just-a-test
+combinations like father-in-law's this-is-just-a-test's
+
+improvements:
+If I had more time I would have liked to preserve newlines

@@ -1,0 +1,47 @@
+Adam Anderson
+aander10
+0973066
+Nov 1 2019
+NLP Assignment #2
+
+This software is used to create an index file for a set of documents and retrieve
+documents based on similarity to given queries.
+
+To run:
+
+    make
+    OR
+    make all
+        *builds program
+
+    make tokenizer input=FileName
+        *Takes document file FileName.txt and produces a tokenized version FileName.tokenized
+            e.g. make tokenizer input=test
+    
+    make preprocessor input=FileName
+        *Takes tokenized file FileName.tokenized and produces a processed version FileName.processed
+            e.g. make preprocessor input=test
+
+    make indexer input=FileName
+        *Takes processed file FileName.processed and produces indexing files, dictionary.txt, postings.txt, and docids.txt
+            e.g. make indexer input=test
+
+    make retriever
+        *Will look for indexing files and ask for queries from the command line
+        *Input and output can be redirected with < inputFile and > outputFile
+            e.g. make retriever < queries.txt > output.txt
+
+    *NOTE: if input=FileName isn't present it will default to looking for a file called documents
+    *NOTE: FileName must not include the extention
+
+    make clean
+        *cleans directory
+
+test plan:
+    Run each segment with a small dataset (test.txt) and verify by hand the output is correct.
+    Run the whole thing with a larger dataset (documents or documents_small) to see it still works with diverse data.
+
+limitations / potential improvements:
+    When retriever is receiving input from a file the query isn't displayed and it doesn't parse out $QRY statements
+    Inner products aren't normalized
+    Won't handle bad data (Incorrectly formatted document files)

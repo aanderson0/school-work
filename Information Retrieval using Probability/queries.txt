@@ -1,0 +1,100 @@
+$QRY 301
+International Organized Crime
+$QRY 302 
+Poliomyelitis and Post-Polio
+$QRY 303
+Hubble Telescope Achievements
+$QRY 304
+Endangered Species (Mammals)
+$QRY 305
+Most Dangerous Vehicles
+$QRY 306
+African Civilian Deaths
+$QRY 307
+New Hydroelectric Projects
+$QRY 308
+Implant Dentistry
+$QRY 309
+Rap and Crime
+$QRY 310
+Radio Waves and Brain Cancer
+$QRY 311
+Industrial Espionage
+$QRY 312
+Hydroponics
+$QRY 313
+Magnetic Levitation-Maglev
+$QRY 314
+Marine Vegetation
+$QRY 315
+Unexplained Highway Accidents
+$QRY 316
+Polygamy Polyandry Polygyny
+$QRY 317
+Unsolicited Faxes
+$QRY 318
+Best Retirement Country
+$QRY 319
+New Fuel Sources
+$QRY 320
+Undersea Fiber Optic Cable
+$QRY 321
+Women in Parliaments 
+$QRY 322
+International Art Crime 
+$QRY 323
+Literary/Journalistic Plagiarism 
+$QRY 324
+Argentine/British Relations
+$QRY 325
+Cult Lifestyles
+$QRY 326
+Ferry Sinkings
+$QRY 327
+Modern Slavery
+$QRY 328
+Pope Beatifications
+$QRY 329
+Mexican Air Pollution 
+$QRY 330
+Iran-Iraq Cooperation
+$QRY 331
+World Bank Criticism
+$QRY 332
+Income Tax Evasion
+$QRY 333
+Antibiotics Bacteria Disease 
+$QRY 334
+Export Controls Cryptography 
+$QRY 335
+Adoptive Biological Parents 
+$QRY 336
+Black Bear Attacks 
+$QRY 337
+Viral Hepatitis
+$QRY 338
+Risk of Aspirin
+$QRY 339
+Alzheimer's Drug Treatment 
+$QRY 340
+Land Mine Ban
+$QRY 341
+Airport Security
+$QRY 342
+Diplomatic Expulsion
+$QRY 343
+Police Deaths
+$QRY 344
+Abuses of E-Mail
+$QRY 345
+Overseas Tobacco Sales
+$QRY 346
+Educational Standards
+$QRY 347
+Wildlife Extinction
+$QRY 348
+Agoraphobia
+$QRY 349
+Metabolism
+$QRY 350
+Health and Computer Terminals
