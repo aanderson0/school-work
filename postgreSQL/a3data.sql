@@ -1,0 +1,18 @@
+DROP TABLE C;
+DROP TABLE V;
+DROP TABLE T;
+CREATE TABLE c (Account VARCHAR, Cname VARCHAR, Province VARCHAR, Cbalance float, Crlimit int);
+CREATE TABLE t (Tno VARCHAR, Vno VARCHAR, Account VARCHAR, T_Date DATE, Amount float);
+CREATE TABLE v (Vno VARCHAR, Vname VARCHAR, City VARCHAR, Vbalanace float);
+INSERT INTO c VALUES ('A1', 'Smith', 'ONT', 2515.00, 2000);
+INSERT INTO c VALUES ('A2', 'Jones', 'BC', 2014.00, 2500);
+INSERT INTO c VALUES ('A3', 'Doc', 'ONT', 150.00, 1000);
+INSERT INTO t VALUES ('T1', 'V2', 'A1', '2019-07-15', 1325);
+INSERT INTO t VALUES ('T2', 'V2', 'A3', '2019-12-16', 1900);
+INSERT INTO t VALUES ('T3', 'V3', 'A1', '2019-09-01', 2500);
+INSERT INTO t VALUES ('T4', 'V4', 'A2', '2019-03-20', 1613);
+INSERT INTO t VALUES ('T5', 'V4', 'A3', '2019-07-31', 3312);
+INSERT INTO v VALUES ('V1', 'Sears', 'Toronto', 200);
+INSERT INTO v VALUES ('V2', 'Walmart', 'Waterloo', 671.05);
+INSERT INTO v VALUES ('V3', 'Esso', 'Windsor', 0);
+INSERT INTO v VALUES ('V4', 'Esso', 'Waterloo', 225);

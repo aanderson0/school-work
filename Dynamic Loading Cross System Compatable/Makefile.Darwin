@@ -1,0 +1,94 @@
+##
+##	Makefile for module formatter project
+##
+
+
+##
+##	Variables
+##	---------
+##
+
+EXE	= modFormatter
+
+# List of all of the object files in your project
+OBJS = \
+	formatter_main.o \
+	formatter_process.o \
+	strconcat.o \
+	strsplit.o
+
+MODS = \
+    moduleSrcCaps
+
+# Flags for compiling
+CFLAGS = -g
+
+# Libs that need to be linked
+LDLIBS = -ldl
+
+
+##
+##	Build Targets
+##	-------------
+##
+
+all world : $(EXE) libs
+
+# Default target - build the program
+$(EXE) : $(OBJS)
+ifndef OS_LINUX
+	$(CC) $(CFLAGS) -o $(EXE) $(OBJS) $(LDLIBS)
+endif
+
+# Build all of the libraries
+libs:
+	$(CC) $(CFLAGS) -fPIC -c default.c
+	$(CC) -dynamiclib -o default.dylib default.o
+	$(CC) $(CFLAGS) -fPIC -c caps.c
+	$(CC) -dynamiclib -o caps.dylib caps.o
+	$(CC) $(CFLAGS) -fPIC -c quote.c
+	$(CC) -dynamiclib -o quote.dylib quote.o
+	$(CC) $(CFLAGS) -fPIC -c crlf.c
+	$(CC) -dynamiclib -o crlf.dylib crlf.o
+	$(CC) $(CFLAGS) -fPIC -c barelf.c
+	$(CC) -dynamiclib -o barelf.dylib barelf.o
+	$(CC) $(CFLAGS) -fPIC -c native.c
+	$(CC) -dynamiclib -o native.dylib native.o
+
+##
+##	Cleanup Targets
+##	---------------
+##
+
+# Remove all the files we create in the top level directory.
+# Lines beginning with a '-' will not cause make(1) to stop if they
+# result in a non-zero exit status (so a missing item to clean
+# up will simply be ignored)
+clean :
+	- rm -f $(EXE)
+	- rm -f $(OBJS)
+	- rm -f tags
+	- del /f *.pdb
+	- del /f *.o
+	- del /f *.obj
+	- del /f *.so
+	- del /f *.dll
+	- del /f *.dylib
+
+#pRemove both the top level items, and the libraries - done simply
+# through dependencies
+allclean : clean
+##
+##	Convenience/Support Targets
+##	---------------------------
+##
+
+# ctags makes a database of source code tags for use with vim and co
+tags ctags : dummy
+	- ctags *.c
+
+# a rule like this dummy rule can be use to make another rule always
+# run - ctags depends on this, so therefore ctags will always be
+# executed by "make ctags" as make is fooled into thinking that it
+# has performed a dependency each time, and therefore re-does the work
+dummy :

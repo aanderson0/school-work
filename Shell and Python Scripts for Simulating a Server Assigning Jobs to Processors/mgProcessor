@@ -1,0 +1,24 @@
+#!/bin/sh
+
+if [ -e $1 ]
+then 
+    rm -f $1
+fi
+mkfifo $1
+chmod 700 $1
+
+while read line < $1
+do
+    if [ "$line" = "exit" ]
+    then
+        break;
+    elif [ "$line" = "" ]
+    then
+        :
+    else
+        echo $($line)
+        echo __server-${USER}-decrement-jobs > /tmp/server-${USER}-fifo
+    fi
+done
+
+rm -f $1

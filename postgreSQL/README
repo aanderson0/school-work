@@ -1,0 +1,39 @@
+Various functions for manipulating a database
+
+Running the programs:
+	first run 
+		\i a3data.sql
+	to initialize the tables.
+	This also drops the tables just incase you need to reset the tables.
+
+	for p1:
+		\i p1.sql
+		SELECT p1('cname');
+
+	for p2:
+		\i p2.sql
+		SELECT p2('vname');
+
+	for p3:
+		\i p3.sql
+		SELECT p3('account', 'cname', 'province', crlimit);
+
+	for p4:
+		\i p4.sql
+		SELECT p4();
+
+	for p5:
+		\i p5.sql
+		SELECT p5();
+
+	for p6:
+		\i p6.sql
+		SELECT p6();
+
+	for p7:
+		\i p7.sql
+		SELECT p7();
+
+	for p8:
+		\i p8.sql
+		SELECT p3('tno', 'vno', 'cno', amount);

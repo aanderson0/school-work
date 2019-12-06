@@ -1,0 +1,84 @@
+##
+##	Makefile for file locker
+##
+
+
+##
+##	Variables
+##	---------
+##
+
+EXE	= modFormatter.exe
+
+# List of all of the object files in your project
+OBJS = \
+		formatter_main.obj \
+		formatter_process.obj \
+		strconcat.obj \
+		strsplit.obj
+
+
+
+# Missing Windows install locations
+SYS_CLOC = c:\Program Files (x86)\Windows Kits\10
+SYS_HEADER_LOC_A	= $(SYS_CLOC)\Include\10.0.17763.0\ucrt
+SYS_HEADER_LOC_B	= $(SYS_CLOC)\Include\10.0.17763.0\um
+SYS_HEADER_LOC_C	= $(SYS_CLOC)\Include\10.0.17763.0\shared
+SYS_LIB_LOC_A	= $(SYS_CLOC)\Lib\10.0.17763.0\um\x64
+SYS_LIB_LOC_B	= $(SYS_CLOC)\Lib\10.0.17763.0\ucrt\x64
+SYS_LIB_LOC_C	= c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\onecore\x64
+
+CC		= cl.exe
+
+LINK	= link.exe
+
+# Flags for compiling
+CFLAGS	= /I"$(SYS_HEADER_LOC_A)" /I"$(SYS_HEADER_LOC_B)" /I"$(SYS_HEADER_LOC_C)"
+
+# Libs that need to be linked
+LDFLAGS	= /LIBPATH:"$(SYS_LIB_LOC_A)" /LIBPATH:"$(SYS_LIB_LOC_B)" /LIBPATH:"$(SYS_LIB_LOC_C)" /MACHINE:x64
+LDLIBS = 
+
+
+##
+##	Build Targets
+##	-------------
+##
+
+# Default target - build the program
+$(EXE) exe :
+##	make dlls
+	$(CC) $(CFLAGS) /c default.c
+	$(LINK) /dll default.obj
+	$(CC) $(CFLAGS) /c caps.c  
+	$(LINK) /dll caps.obj
+	$(CC) $(CFLAGS) /c quote.c 
+	$(LINK) /dll quote.obj
+	$(CC) $(CFLAGS) /c crlf.c  
+	$(LINK) /dll crlf.obj
+	$(CC) $(CFLAGS) /c barelf.c
+	$(LINK) /dll barelf.obj
+	$(CC) $(CFLAGS) /c native.c 
+	$(LINK) /dll native.obj
+##	make exe
+	$(CC) $(CFLAGS) /c formatter_main.c
+	$(CC) $(CFLAGS) /c formatter_process.c
+	$(CC) $(CFLAGS) /c strconcat.c
+	$(CC) $(CFLAGS) /c strsplit.c
+	$(LINK) $(CFLAGS) $(LDFLAGS) $(LDLIBS) formatter_process.obj formatter_main.obj strconcat.obj strsplit.obj /out:$(EXE)
+	icacls $(EXE) /grant Everyone:RX
+
+##
+##	Cleanup Targets
+##	---------------
+##
+
+clean :
+	- del /f $(EXE)
+	- del /f $(OBJS)
+	- del /f *.pdb
+	- del /f *.o
+	- del /f *.obj
+	- del /f *.so
+	- del /f *.dll
+	- del /f *.dylib

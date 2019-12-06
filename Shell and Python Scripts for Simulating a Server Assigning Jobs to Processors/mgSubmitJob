@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+#
+# This program is part of the Mini Grid system
+#
+
+import socket
+import getpass
+import sys
+
+
+# use the same socket that the server will listen on
+FILE_ADDRESS = "/tmp/server-%s-sock" % getpass.getuser()
+
+# ensure that there is something on the command line
+if len(sys.argv) < 2 or sys.argv[1] == '-h':
+    print >> sys.stderr, ""
+    print >> sys.stderr, "%s <job command line>" % sys.argv[0]
+    print >> sys.stderr, ""
+    print >> sys.stderr, "This program submits jobs to the MiniGrid system."
+    print >> sys.stderr, "Specify the commandline of the job to run as arguments."
+    print >> sys.stderr, ""
+    print >> sys.stderr, "For example:"
+    print >> sys.stderr, '    %s echo "Hello there"' % sys.argv[0]
+    print >> sys.stderr, ""
+    sys.exit(-1)
+
+
+# pack up the command line data, quoted for running later, and ensuring
+# that special characters are not trapped in the quotes
+commandData = sys.argv[1]
+for arg in sys.argv[2:]:
+    if arg[0] in "<>|&":
+        commandData = "%s %s" % (commandData, arg)
+    else:
+        commandData = "%s '%s'" % (commandData, arg)
+
+
+# create a socket for the connection
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+
+# connect to the UNIX domain socket the socket server is listening on
+try:
+    sock.connect(FILE_ADDRESS)
+except socket.error, msg:
+    sys.stderr.write("Failed opening socket '%s' : %s\n" % (FILE_ADDRESS, msg))
+    sys.exit(-1)
+
+
+# send the command to the server
+sock.sendall(commandData)
+

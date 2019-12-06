@@ -1,0 +1,68 @@
+Description:
+
+	Client-server system for storing a collection of books.
+
+To run:
+
+	make
+	./server <port#>
+	./client <server ip> <port#>  (in a separate window)
+	
+Use:
+
+	[REQUEST]\n
+	[ATTRIBUTES]\n (one per line, no duplicates, may be empty)
+	\n 
+
+	[REQUEST] = 
+		GET - returns all books matching attribute criteria
+		SUBMIT - adds a book with attribute criteria to the collection
+		REMOVE - removes all books matching attribute criteria
+
+	[ATTRIBUTES] =
+		AUTHOR <VALUE>
+		TITLE <VALUE>
+		LOCATION <VALUE>
+
+Design assumptions:
+	
+	-Can only accept 5 connections at once, the 6th will wait until another has finished to send/process a request
+	-Input lines limited to 1024 characters
+	-Maximum number of books stored on the server is 2048
+	-GET and REMOVE requests with no attributes specified will get or remove all books on the server
+	-Client adds to print statements to make output more readable
+	-Client reestablishes connection for each request
+
+Debugging messages:
+
+	On succesful connection:
+		Established connection with <hostname> <ip>
+	On message received:
+		Receeived: <Message>
+	On disconnect:
+		Disconnected from <hostname> <ip>
+
+Response types:
+
+	101: OK						- everything worked properly
+	202: Bad request			- the request message doesn't match the protocol
+	303: Internal server error	- the server crashed, this happens when gethostbyaddr or inet_ntoa return null
+	404: Book not found			- the attributes requested did not match any books in the collection
+	505: Service not available	- the collection has reached 2048 books and no more can be added
+
+Example output:
+	client:
+		Enter request (or type quit to exit):
+		SUBMIT
+		TITLE TEST
+
+		RESPONSE---------------
+		101: OK
+		-----------------------
+
+	server:
+		Established connection with localhost (127.0.0.1)
+		received: SUBMIT
+		received: TITLE TEST
+
+		Disconnected from localhost (127.0.0.1)

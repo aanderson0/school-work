@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+import socket
+import getpass
+import sys
+import os
+
+if len(sys.argv) != 2:
+    print >> sys.stderr, sys.argv[0], "takes exactly one argument - the FIFO"
+    sys.exit(-1)
+
+# record the name of the FIFO we echo everything to
+FIFO_NAME = sys.argv[1]
+
+# set up the name of the socket that we want to use
+FILE_ADDRESS = "/tmp/server-%s-sock" % getpass.getuser()
+
+# set up FIFO
+pipe = os.open(FIFO_NAME, os.O_WRONLY)
+
+
+# create socket of type AF_UNIX
+
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+# bind and listen for incoming connections
+
+sock.bind(FILE_ADDRESS)
+sock.listen(5)
+
+# process connections as they come in
+
+loopFlag = True
+while loopFlag:
+    try:
+        msgsock, clientAddr = sock.accept()
+    except OSError, msg:
+        print >> sys.stderr, "Error accepting socket message:", msg
+        sys.exit(1)
+    
+    message = True
+    while message and loopFlag:
+        try:
+            message = msgsock.recv(1024)
+        except OSError, msg:
+            print >> sys.stderr, "Error reading message:", msg
+            sys.exit(1)
+
+        if message:
+            if message != "__socket-kill":
+                os.write(pipe, message+"\n")
+            else:
+                loopFlag = False
+    msgsock.close()
+sock.close()
+os.unlink(FILE_ADDRESS)
+sys.exit(0)
+
+

@@ -1,0 +1,90 @@
+To run:
+	Linux / Mac :
+		make
+		./lockRanger <file>
+	Windows :
+		nmake /F Makefile.Windows
+		lockRanger <file>
+
+Testing:
+	Check exclusive locks work:
+		T1: run X 0 10
+		T2: run X 0 10
+		
+		Expected:
+			T2 waits after printing that it is requesting the lock until T1 unlocks or quits
+		Outcome:
+			Program passes
+		
+		T1: run X 0 10
+		T2: run S 0 10
+
+		Expected:
+			T2 waits after printing that it is requesting the lock until T1 unlocks or quits
+		Outcome:
+			Program passes
+
+		T1: run S 0 10
+		T2: run X 0 10
+
+		Expected:
+			T2 waits after printing that it is requesting the lock until T1 unlocks or quits
+		Outcome:
+			Program passes
+
+	Check shared locks work:
+		T1: run S 0 10
+		T2: run S 0 10
+
+		Expected:
+			T2 is granted a lock
+		Outcome:
+			Program passes
+
+	Check unlock works:
+		T1: run X 0 10
+		T2: run X 0 10
+		T1: run U 0 10
+
+		Expected:
+			T2 waits after printing that it is requesting the lock until T1 unlocks and then is granted a lock
+		Outcome:
+			Program passes
+
+	Check regions are correct:
+		T1: run X 0 10
+		T2: run X 4 3
+		T1: run U 4 3
+		T2: run X 0 4
+		T2: ctrl+c
+		T2: run X 7 3
+
+		Expected:
+			T2 waits until T1 U's 4 3, T2 blocks on both X 0 4 and X 7 3
+		Outcome:
+			Program passes
+
+	Check test lock works:
+		T1: run X 0 10
+		T1: run T 0 10
+
+		Expected:
+			Info about lock is produced
+		Outcome:
+			Works on Mac, but on Linux the lock is granted regardless because it's the same process.
+
+		T1: run X 0 10
+		T2: run T 0 5
+
+		Expected:
+			Info about lock is produced
+		Outcome:
+			Program passes
+
+		T1: run S 0 10
+		T2: run T 0 5
+
+		Expected:
+			Info about lock is produced
+		Outcome:
+			Program passes

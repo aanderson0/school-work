@@ -1,0 +1,17 @@
+aander10
+0973066
+
+llel a4
+
+to run:
+
+make
+oclgrind ./conway <-o> <-n #>
+
+
+notes:
+
+	-unexpected behaviour with more than 26 kernels
+	-if used with 1 kernel it just runs in serial, I did this for testing purposes
+	-everything is done in global memory because whenever I tried to use local memory
+	 I just kept getting illegal reads

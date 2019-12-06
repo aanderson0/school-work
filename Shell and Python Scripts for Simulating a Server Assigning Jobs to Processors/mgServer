@@ -1,0 +1,157 @@
+#!/bin/sh
+
+trap "cleanup" 2
+
+cleanup() {
+echo "Cleaning up"
+i=0
+while [ $(($i)) -lt $(($NUM_PROC)) ]
+do
+	if [ "$(echo "${runningProcs}" | cut -d' ' -f$((${i}+1)))" = "running" ]
+	then
+		echo exit > /tmp/processor-${USER}.fifo.$i
+	fi
+	i=$(($i+1))
+done
+
+rm -f /tmp/server-${USER}-fifo
+
+./mgSubmitJob __socket-kill
+
+exit 0
+}
+
+# set up some globals
+FIFO_S="/tmp/server-${USER}-fifo"
+FIFO_P="/tmp/processor-${USER}-fifo"
+
+# start socket server
+./mgSocketInterface ${FIFO_S} &
+
+# calculate default number of processors
+OSSTR="$(uname)"
+if [ "$OSSTR" = "Linux" ]
+then
+NUM_PROC="$(nproc)"
+else
+NUM_PROC="$(sysctl -n hw.logicalcpu)"
+fi
+
+# process command line options (so that number of processors can be overridden)
+PRINT_HELP="NO"
+for arg in "$@"
+do
+	case "${arg}" in
+	-[h?]*)
+		PRINT_HELP="YES"
+		;;
+	-*)
+		echo "Unknown option '${arg}'" >&2
+        exit -1
+		;;
+	*)
+		echo "Unknown argument '${arg}'" >&2
+        exit -1
+		;;
+	esac
+done
+
+
+# if help was requested, print it to stderr and exit
+if [ X"$PRINT_HELP" = X"YES" ]
+then
+    echo "$0 <options>" >&2
+    echo "Option:" >&2
+    echo "-h    : help - this is it" >&2
+    echo "-n<N> : set the number of processing units to <N>" >&2
+    exit -1
+fi
+
+# make server fifo
+if [ -e "/tmp/server-${USER}-fifo" ]
+then
+	:
+else
+	mkfifo /tmp/server-${USER}-fifo
+	chmod 700 /tmp/server-${USER}-fifo
+fi
+
+# start proccessors
+echo "Starting up ${NUM_PROC} processing units"
+i=0
+runningProcs=""
+while [ $(($i)) -lt $(($NUM_PROC)) ]
+do
+	runningProcs=$(echo "${runningProcs}" "running")
+	(./mgProcessor /tmp/processor-${USER}.fifo.$i >/tmp/processor-${USER}.log.$i &)
+	i=$(($i+1))
+done
+runningProcs=$(echo ${runningProcs} | cut -b 1- )
+echo "Ready for processing : place jobs into /tmp/server-${USER}-fifo"
+
+nextProc=0
+jobs=0
+numRunningProcs=${NUM_PROC}
+# listen for jobs
+while read line < /tmp/server-${USER}-fifo
+do
+	if [ "$line" = "shutdown" ]
+	then
+		break
+	elif [ "$line" = "" ]
+	then
+		:
+	elif [ "$line" = "__server-${USER}-decrement-jobs" ]
+	then
+		jobs=$(($jobs-1))
+	elif [ "$line" = "status" ]
+	then
+		echo "Processors: ${numRunningProcs}"
+		echo "Jobs in queue: ${jobs}"
+	elif [ "$line" = "exit" ]
+	then
+		echo "Exiting processor $nextProc"
+		echo $line > /tmp/processor-${USER}.fifo.$nextProc
+		# flag processor as inactive
+		tempArr=""
+		tempCount=0
+		while [ $(($tempCount)) -lt $(($NUM_PROC)) ]
+		do
+			if [ $(($tempCount)) = $(($nextProc)) ]
+			then
+				tempArr=$(echo "${tempArr}" "stopped")
+			else
+				tempArr=$(echo "${tempArr}" $(echo "${runningProcs}" | cut -d' ' -f$((${tempCount}+1))))
+			fi
+			tempCount=$((${tempCount}+1))
+		done
+		runningProcs="${tempArr}"
+		runningProcs=$(echo ${runningProcs} | cut -b 1- )
+		numRunningProcs=$(($numRunningProcs-1))
+		if [ $(($numRunningProcs)) = 0 ]
+		then
+			echo "All processors exited"
+			break
+		fi
+		# find next active processor
+		nextProc=$((($nextProc+1)%$NUM_PROC))
+		while [ "$(echo "${runningProcs}" | cut -d' ' -f$((${nextProc}+1)))" = "stopped" ]
+		do
+			nextProc=$((($nextProc+1)%$NUM_PROC))
+		done
+	else
+		echo "Processor $nextProc : $line"
+		echo $line > /tmp/processor-${USER}.fifo.$nextProc
+		jobs=$(($jobs+1))
+		# find next active processor
+		nextProc=$((($nextProc+1)%$NUM_PROC))
+		while [ "$(echo "${runningProcs}" | cut -d' ' -f$((${nextProc}+1)))" = "stopped" ]
+		do
+			nextProc=$((($nextProc+1)%$NUM_PROC))
+		done
+	fi
+done 
+
+# clean up
+echo "Shutting down"
+cleanup
